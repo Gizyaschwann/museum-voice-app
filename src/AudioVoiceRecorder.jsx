@@ -4,7 +4,7 @@ import { format } from 'date-fns';
 import firebase from "firebase/compat/app";
 
 
-const AudioRecorder = () => {
+const AudioVoiceRecorder = () => {
     const [permission, setPermission] = useState(false);
     const mediaRecorder = useRef(null);
     const [recordingStatus, setRecordingStatus] = useState("inactive");
@@ -15,6 +15,9 @@ const AudioRecorder = () => {
     const storage = getStorage();
     const storageRef = useRef(null);
     // const [audioUrls, setAudioUrls] = useState([]);
+
+    const [audioList, setAudioList] = useState([])
+    const audioListRef = ref(storage, '/');
 
     // Create file metadata including the content type
     /** @type {any} */
@@ -124,17 +127,15 @@ const AudioRecorder = () => {
             });
         };
     };
-    const removeAudio = () => {
-        // deleteObject(audioRef).then(() => {
-        //     // File deleted successfully
-        // }).catch((error) => {
-        //     // Uh-oh, an error occurred!
-        // });
-        // setAudio(null);
+    const removeAudio = (audioRef) => {
+        deleteObject(audioRef).then(() => {
+            // File deleted successfully
+        }).catch((error) => {
+            // Uh-oh, an error occurred!
+            console.log(error)
+        });
+        setAudio(null);
     }
-
-    const [audioList, setAudioList] = useState([])
-    const audioListRef = ref(storage, '/');
 
     try {
         useEffect(() => {
@@ -191,4 +192,5 @@ const AudioRecorder = () => {
         </div>
     );
 };
-export default AudioRecorder;
+
+export default AudioVoiceRecorder;

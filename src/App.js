@@ -3,11 +3,17 @@ import './App.css';
 import {Auth} from "./components/auth";
 import React from 'react'
 import { VoiceRecorder } from 'react-voice-recorder-player';
-import AudioRecorder from "../src/AudioRecorder";
+import AudioVoiceRecorder from "./AudioVoiceRecorder";
 import {MenuItem, Select} from "@mui/material";
-
+import { AudioRecorder } from 'react-audio-voice-recorder';
+import ExampleComponent from "./ExampleComponent";
+import './languages/i18n';
+import {useTranslation} from "react-i18next";
+import LanguageSelector from './languages/LanguageSelector';
 
 function App() {
+
+    const {t, i18n} = useTranslation();
 
     return (
         <div className="App">
@@ -15,20 +21,19 @@ function App() {
                 <img src={logo} alt="parrish_logo" className="responsive"/>
             </header>
             <div>
-                <h1>THE ART OF FOOD</h1>
-                <h2>Please select one of the following questions from the dropdown menu and record your answer:</h2>
+                <LanguageSelector/>
+                <h1>{t("titleMain")}</h1>
+                <h2>{t("instructions")}</h2>
                 <Select displayEmpty>
                     <MenuItem value="">
                         <em>Press here to select the question</em>
                     </MenuItem>
-                    <MenuItem value={1}>What is the most delicious thing you have ever eaten? Describe it!
-                    </MenuItem>
-                    <MenuItem value={2}>What role does food play in your family's cultural or holiday
-                        traditions?</MenuItem>
-                    <MenuItem value={3}>Share a memorable food from your childhood.</MenuItem>
+                    <MenuItem value={1}>{t("q1")}</MenuItem>
+                    <MenuItem value={2}>{t("q2")}</MenuItem>
+                    <MenuItem value={3}>{t("q3")}</MenuItem>
                 </Select>
                 <div>
-                    <AudioRecorder/>
+                    <AudioVoiceRecorder/>
                 </div>
             </div>
             {/*<div>*/}
@@ -36,6 +41,10 @@ function App() {
             {/*    <VoiceRecorder/>*/}
             {/*</div>*/}
             {/*<Auth/>*/}
+            <div>
+                <h1>React Audio Voice Recorder</h1>
+                <ExampleComponent/>
+            </div>
         </div>
     );
 }
