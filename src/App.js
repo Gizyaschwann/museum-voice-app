@@ -1,13 +1,14 @@
 import logo from './parrish_logo.svg';
 import './App.css';
 import {Auth} from "./components/auth";
-import React, {useState} from 'react'
+import React from 'react'
 import { VoiceRecorder } from 'react-voice-recorder-player';
 import AudioRecorder from "../src/AudioRecorder";
 import {MenuItem, Select} from "@mui/material";
 
 
 function App() {
+
     return (
         <div className="App">
             <header>
@@ -20,7 +21,8 @@ function App() {
                     <MenuItem value="">
                         <em>Press here to select the question</em>
                     </MenuItem>
-                    <MenuItem value={1}>What is the most delicious thing you have ever eaten? Describe it!</MenuItem>
+                    <MenuItem value={1}>What is the most delicious thing you have ever eaten? Describe it!
+                    </MenuItem>
                     <MenuItem value={2}>What role does food play in your family's cultural or holiday
                         traditions?</MenuItem>
                     <MenuItem value={3}>Share a memorable food from your childhood.</MenuItem>

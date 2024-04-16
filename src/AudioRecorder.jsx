@@ -1,6 +1,7 @@
-import { useState, useRef } from "react";
-import { getStorage, ref, uploadBytes, deleteObject, getBlob } from "firebase/storage";
+import {useState, useRef, useEffect} from "react";
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, getBlob, list, listAll } from "firebase/storage";
 import { format } from 'date-fns';
+import firebase from "firebase/compat/app";
 
 
 const AudioRecorder = () => {
@@ -13,16 +14,56 @@ const AudioRecorder = () => {
 
     const storage = getStorage();
     const storageRef = useRef(null);
-    console.log(storageRef + 'dddddddddddddd')
-    const listRecs = async () => {
-        await getBlob("Default setting");
-    }
+    // const [audioUrls, setAudioUrls] = useState([]);
+
     // Create file metadata including the content type
     /** @type {any} */
     const metadata = {
         name: 'test',
         contentType: 'audio/wav'
     };
+    const downloadAudio = async () => {
+        const uri = await firebase
+            .storage()
+            .ref("audio.wav")
+            .getDownloadURL();
+
+        console.log("uri:", uri);
+
+        // The rest of this plays the audio
+        const soundObject = new Audio.Sound();
+        try {
+            await soundObject.loadAsync({ uri });
+            await soundObject.playAsync();
+        } catch (error) {
+            console.log("error:", error);
+        }
+    };
+    const listAllAudio = async () => {
+        // Create a reference under which you want to list
+        const listRef = ref(storage, '/');
+
+        // Find all the prefixes and items.
+        listAll(listRef)
+            .then((res) => {
+                res.prefixes.forEach((folderRef) => {
+                    // All the prefixes under listRef.
+                    // You may call listAll() recursively on them.
+                });
+                res.items.forEach((itemRef) => {
+                    console.log(itemRef.name)
+                    // console.log(typeof (itemRef.storage))
+                    // setAudioUrls(itemRef.name)
+
+                    // itemRef.getDownloadURL().then((url) => {
+                    //     console.log('download url', url);
+                    // })
+                    // All the items under listRef.
+                });
+            }).catch((error) => {
+            // Uh-oh, an error occurred!
+        });
+    }
 
     const getMicrophonePermission = async () => {
         if ("MediaRecorder" in window) {
@@ -65,6 +106,7 @@ const AudioRecorder = () => {
                 "Enter a name for your recording: ",
                 "Default recording"
             );
+            // const audioRef = ref(`/${clipName}`)
             //creates a blob file from the audiochunks data
             const audioBlob = new Blob(audioChunks);
             //creates a playable URL from the blob file.
@@ -73,20 +115,43 @@ const AudioRecorder = () => {
             setAudioChunks([]);
             // 'file' comes from the Blob or File API
             let timeStamp = format(new Date(), 'MM-dd-yyyy-h:mm:ssa');
-            const storageRef = ref(storage, clipName + ' ' + timeStamp);
-            uploadBytes(storageRef, audioBlob, metadata).then((snapshot) => {
+            const audioRef = ref(storage, clipName + ' ' + timeStamp);
+            uploadBytes(audioRef, audioBlob, metadata).then((snapshot) => {
                 console.log('Uploaded a blob or file! ' + timeStamp);
+                getDownloadURL(snapshot.ref).then((url) => {
+                    setAudioList((prev) => [...prev, url])
+                });
             });
         };
     };
     const removeAudio = () => {
-        // deleteObject(storage).then(() => {
+        // deleteObject(audioRef).then(() => {
         //     // File deleted successfully
         // }).catch((error) => {
         //     // Uh-oh, an error occurred!
         // });
-        setAudio(null);
+        // setAudio(null);
     }
+
+    const [audioList, setAudioList] = useState([])
+    const audioListRef = ref(storage, '/');
+
+    try {
+        useEffect(() => {
+            listAll(audioListRef).then((response) => {
+                response.items.forEach((item) => {
+                    getDownloadURL(item).then((url) => {
+                        setAudioList((prev) => [...prev, url])
+                    })
+                })
+            }).catch((error) => {
+                console.log(error);
+            })
+        }, [])
+    } catch (e) {
+        console.log(e)
+    }
+
     return (
         <div>
             <h2>Audio Recorder</h2>
@@ -109,25 +174,20 @@ const AudioRecorder = () => {
                     ) : null}
                 </div>
                 {audio ? (
-                    <div className="audio-container">
-                        <audio src={audio} controls></audio>
-                        <a download href={audio}>
-                            Download Recording
-                        </a>
-                    </div>,
                         <div className="audio-container">
                             <audio src={audio} controls></audio>
                             <button onClick={removeAudio} type="button">
-                                Remove Recording
+                                Retry
                             </button>
                         </div>
                 ) : null}
-                <div>
-                    <button onClick={listRecs} type="button">
-                        List Recording
-                    </button>
-                </div>
             </main>
+            <ul>
+            {audioList.map((url) => {
+                return <li key={url.name}>{url}
+                    <audio src={url} controls></audio></li>
+            })}
+            </ul>
         </div>
     );
 };

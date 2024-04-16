@@ -9,7 +9,7 @@ html, body {
 }
 
 body {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'avenir_lt_std45_book', sans-serif;
   font-size: 0.8rem;
   background-color: #65CBE1;
 }
@@ -18,6 +18,10 @@ body {
   height: 100%;
   display: flex;
   flex-direction: column;
+}
+
+ul {
+  list-style-type: none;
 }
 
 h1, h2 {
