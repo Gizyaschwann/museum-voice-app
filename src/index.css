@@ -54,15 +54,15 @@ canvas {
   width: calc(50% - 0.25rem);
 }
 
-button {
-  font-size: 1rem;
-  background: black;
-  text-align: center;
-  color: white;
-  border: none;
-  transition: all 0.2s;
-  padding: 0.5rem;
-}
+/*Button {*/
+/*  font-size: 1rem;*/
+/*  background: black;*/
+/*  text-align: center;*/
+/*  color: white;*/
+/*  border: none;*/
+/*  transition: all 0.2s;*/
+/*  padding: 0.5rem;*/
+/*}*/
 
 button:hover, button:focus {
   box-shadow: inset 0px 0px 10px rgba(255, 255, 255, 1);
@@ -207,4 +207,9 @@ input[type=checkbox]:checked ~ aside {
   url('./fonts/AvenirLTStd-Heavy.otf') format('woff');
   font-weight: normal;
   font-style: normal;
+}
+
+li{
+  display: inline;
+  text-align: left;
 }

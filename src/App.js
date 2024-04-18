@@ -4,16 +4,41 @@ import {Auth} from "./components/auth";
 import React from 'react'
 import { VoiceRecorder } from 'react-voice-recorder-player';
 import AudioVoiceRecorder from "./AudioVoiceRecorder";
-import {MenuItem, Select} from "@mui/material";
+import {Menu, MenuItem, Select} from "@mui/material";
 import { AudioRecorder } from 'react-audio-voice-recorder';
 import ExampleComponent from "./ExampleComponent";
 import './languages/i18n';
 import {useTranslation} from "react-i18next";
 import LanguageSelector from './languages/LanguageSelector';
+import DropdownComponent from "./DropdownComponent";
 
 function App() {
 
     const {t, i18n} = useTranslation();
+    const [element, setElement] = React.useState(null)
+
+    // const handleClose = event => {
+    //     setElement(null)
+    //
+    //     // grab the value of the "value" attribute here
+    //     console.log('HEEEEEEHEHEHEHE' + event.target.getAttribute("value"))
+    // }
+    //
+    // const handleClick = event => {
+    //     setElement(event.currentTarget)
+    // }
+    //
+    // const [selectedElement, setSelectedElement] = React.useState(null);
+    // const [open, setOpen] = React.useState(false);
+    // function handleOpenMenu() {
+    //     setOpen(true);
+    // }
+    // function handleCloseMenu(event) {
+    //     setOpen(false);
+    //     setselectedElement(event.target);
+    // }
+    // const [lang, setLang] = useState("en");
+
 
     return (
         <div className="App">
@@ -24,14 +49,7 @@ function App() {
                 <LanguageSelector/>
                 <h1>{t("titleMain")}</h1>
                 <h2>{t("instructions")}</h2>
-                <Select displayEmpty>
-                    <MenuItem value="">
-                        <em>Press here to select the question</em>
-                    </MenuItem>
-                    <MenuItem value={1}>{t("q1")}</MenuItem>
-                    <MenuItem value={2}>{t("q2")}</MenuItem>
-                    <MenuItem value={3}>{t("q3")}</MenuItem>
-                </Select>
+                {/*<DropdownComponent/>*/}
                 <div>
                     <AudioVoiceRecorder/>
                 </div>
@@ -41,10 +59,10 @@ function App() {
             {/*    <VoiceRecorder/>*/}
             {/*</div>*/}
             {/*<Auth/>*/}
-            <div>
-                <h1>React Audio Voice Recorder</h1>
-                <ExampleComponent/>
-            </div>
+            {/*<div>*/}
+            {/*    <h1>React Audio Voice Recorder</h1>*/}
+            {/*    <ExampleComponent/>*/}
+            {/*</div>*/}
         </div>
     );
 }
