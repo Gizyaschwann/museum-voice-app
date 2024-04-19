@@ -11,6 +11,7 @@ import './languages/i18n';
 import {useTranslation} from "react-i18next";
 import LanguageSelector from './languages/LanguageSelector';
 import DropdownComponent from "./DropdownComponent";
+import Footer from "./Footer";
 
 function App() {
 
@@ -43,26 +44,18 @@ function App() {
     return (
         <div className="App">
             <header>
-                <img src={logo} alt="parrish_logo" className="responsive"/>
+                <img src={logo} alt="parrish_logo" height={70} className="responsive"/>
             </header>
             <div>
                 <LanguageSelector/>
-                <h1>{t("titleMain")}</h1>
+                <h1><b>{t("titleMain")}</b></h1>
                 <h2>{t("instructions")}</h2>
                 {/*<DropdownComponent/>*/}
                 <div>
                     <AudioVoiceRecorder/>
                 </div>
             </div>
-            {/*<div>*/}
-            {/*    <h1>React Voice Recorder</h1>*/}
-            {/*    <VoiceRecorder/>*/}
-            {/*</div>*/}
-            {/*<Auth/>*/}
-            {/*<div>*/}
-            {/*    <h1>React Audio Voice Recorder</h1>*/}
-            {/*    <ExampleComponent/>*/}
-            {/*</div>*/}
+            <Footer/>
         </div>
     );
 }

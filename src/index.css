@@ -24,7 +24,7 @@ ul {
   list-style-type: none;
 }
 
-h1, h2 {
+h1, h2, h3 {
   font-size: 2rem;
   font-family: 'avenir_lt_std45_book', sans-serif;
   text-align: center;
@@ -32,6 +32,23 @@ h1, h2 {
   padding: 0.5rem 0 0 0;
   color: white;
 }
+/*h2 {*/
+/*  font-size: 1.5rem;*/
+/*  font-family: 'avenir_lt_std45_book', sans-serif;*/
+/*  text-align: center;*/
+/*  font-weight: normal;*/
+/*  padding: 0.5rem 0 0 0;*/
+/*  color: white;*/
+/*}*/
+
+/*h4 {*/
+/*  font-size: 1.3rem;*/
+/*  font-family: 'avenir_lt_std45_book', sans-serif;*/
+/*  text-align: center;*/
+/*  font-weight: normal;*/
+/*  padding: 0.5rem 0 0 0;*/
+/*  color: white;*/
+/*}*/
 
 .main-controls {
   padding: 0.5rem 0;
@@ -200,7 +217,14 @@ input[type=checkbox]:checked ~ aside {
     margin: 0 auto;
   }
 }
-
+li{
+  display: inline;
+  text-align: left;
+}
+ListItem{
+  font-family: 'avenir_lt_std45_book', sans-serif;
+  font-weight: 900;
+}
 @font-face {
   font-family: 'avenir_lt_std45_book';
   src: url('./fonts/AvenirLTStd-Book.otf') format('woff2'),
@@ -209,7 +233,3 @@ input[type=checkbox]:checked ~ aside {
   font-style: normal;
 }
 
-li{
-  display: inline;
-  text-align: left;
-}

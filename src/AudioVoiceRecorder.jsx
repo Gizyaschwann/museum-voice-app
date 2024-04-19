@@ -3,7 +3,20 @@ import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, getBlob, li
 import { format } from 'date-fns';
 import firebase from "firebase/compat/app";
 import DropdownComponent, {chooseQuestion} from "./DropdownComponent";
-import {MenuItem, Select, Button, InputLabel, FormControl, Box} from "@mui/material";
+import {
+    MenuItem,
+    Select,
+    Button,
+    InputLabel,
+    FormControl,
+    Box,
+    List,
+    ListItem,
+    ListItemButton,
+    ListItemText
+} from "@mui/material";
+import LinearProgress from '@mui/joy/LinearProgress';
+import Form from 'react-bootstrap/Form';
 import {useTranslation} from "react-i18next";
 
 
@@ -16,11 +29,13 @@ const AudioVoiceRecorder = () => {
     const [audio, setAudio] = useState(null);
     const[blob, setBlob] = useState(null)
 
+
     const storage = getStorage();
     const storageRef = useRef(null);
     // const [audioUrls, setAudioUrls] = useState([]);
 
     const [audioList, setAudioList] = useState([{}])
+    const [audios, setAudios] = useState([{}])
     const audioListRef = ref(storage, '/');
 
     const {t, i18n} = useTranslation();
@@ -37,6 +52,7 @@ const AudioVoiceRecorder = () => {
     // Create file metadata including the content type
     /** @type {any} */
     const metadata = {
+        name: 'test',
         contentType: 'audio/x-m4a'
     };
 
@@ -61,7 +77,7 @@ const AudioVoiceRecorder = () => {
 
     const startRecording = async () => {
         setRecordingStatus("recording");
-
+        setSubmitted("false");
         //create new Media recorder instance using the stream
         const media = new MediaRecorder(stream, {type: mimeType});
         //set the MediaRecorder instance to the mediaRecorder ref
@@ -79,6 +95,7 @@ const AudioVoiceRecorder = () => {
 
     const stopRecording = () => {
         setRecordingStatus("inactive");
+        // setSubmitted("false")
         //stops the recording instance
         mediaRecorder.current.stop();
         mediaRecorder.current.onstop = () => {
@@ -89,7 +106,7 @@ const AudioVoiceRecorder = () => {
             const audioUrl = URL.createObjectURL(audioBlob);
             setAudio(audioUrl);
             setAudioChunks([]);
-            //setBlob(audioBlob);
+            setBlob(audioBlob);
             // 'file' comes from the Blob or File API
             // let timeStamp = format(new Date(), 'MM-dd-yyyy-h:mm:ssa');
 
@@ -97,6 +114,7 @@ const AudioVoiceRecorder = () => {
     };
 
     const submitAudio = () => {
+        setSubmitted("true")
         const clipName = prompt(
             "Enter a question number and a title for your recording:",
             ""
@@ -105,24 +123,14 @@ const AudioVoiceRecorder = () => {
         const audioRef = ref(storage, fileName);
         uploadBytes(audioRef, blob, metadata).then((snapshot) => {
             console.log('Uploaded a blob or file! ' + fileName);
-            // getDownloadURL(snapshot.ref).then((url) => {
-            //     setAudioList((prev) => [...prev, {urlPath: url, fileTitle: fileName}])
-            // });
+            getDownloadURL(snapshot.ref).then((url) => {
+                setAudios((prev) => [...prev, {urlPath: url, fileTitle: fileName}])
+            });
         });
-        setSubmitted(true)
-        // setAudio([])
+
+        // setAudio(null)
         // setBlob([])
     }
-
-    // const removeAudio = (audioRef) => {
-    //     deleteObject(audioRef).then(() => {
-    //         // File deleted successfully
-    //     }).catch((error) => {
-    //         // Uh-oh, an error occurred!
-    //         console.log(error)
-    //     });
-    //     setAudio(null);
-    // }
 
     try {
         useEffect(() => {
@@ -132,12 +140,14 @@ const AudioVoiceRecorder = () => {
                     // console.log(item)
                     console.log(item.name)
                     getDownloadURL(item).then((url) => {
-                        setAudioList((prev) => [...prev, {urlPath: url, fileTitle: item.name}])
+                        console.log(url)
+                        setAudios((prev) => [...prev, {urlPath: url, fileTitle: item.name}])
                     })
                 })
             }).catch((error) => {
                 console.log(error);
             })
+
         }, [])
     } catch (e) {
         console.log(e)
@@ -146,18 +156,23 @@ const AudioVoiceRecorder = () => {
 
     return (
         <div>
-            <FormControl fullWidth>
-                <Select
-                    value={t("taste")}
-                    name="selectedOption"
-                    onChange={chooseQuestion}>
-                    <MenuItem value={t("taste")}>{t("q1")}</MenuItem>
-                    <MenuItem value={t("culture")}>{t("q2")}</MenuItem>
-                    <MenuItem value={t("memories")}>{t("q3")}</MenuItem>
-                </Select>
-            </FormControl>
+            <Form.Select size="lg">
+                <option key={t("taste")}>{t("q1")}</option>
+                <option key={t("culture")}>{t("q2")}</option>
+                <option key={t("memories")}>{t("q3")}</option>
+            </Form.Select>
+            {/*<FormControl fullWidth>*/}
+            {/*    <Select*/}
+            {/*        value="Taste"*/}
+            {/*        name="selectedOption"*/}
+            {/*        onChange={chooseQuestion}>*/}
+            {/*        <MenuItem value={t("taste")}>{t("q1")}</MenuItem>*/}
+            {/*        <MenuItem value={t("culture")}>{t("q2")}</MenuItem>*/}
+            {/*        <MenuItem value={t("memories")}>{t("q3")}</MenuItem>*/}
+            {/*    </Select>*/}
+            {/*</FormControl>*/}
                 {/*<h2>Your chose a question #1. Your answer tag is: {valueQ}</h2>*/}
-            <h2>Audio Recorder</h2>
+            <h3>Audio Recorder</h3>
             <main>
                 <div className="audio-controls">
                     <Box textAlign="center">
@@ -172,31 +187,40 @@ const AudioVoiceRecorder = () => {
                         </Button>
                     ) : null}
                     {recordingStatus === "recording" ? (
-                        <Button variant="contained" color="warning" onClick={stopRecording} type="button">
-                            Stop Recording
-                        </Button>
+                        <LinearProgress size="lg" value={50}/>
                     ) : null}
+                        {recordingStatus === "recording" ? (
+                            <Button variant="contained" color="warning" onClick={stopRecording} type="button">
+                                Stop Recording
+                            </Button>
+                        ) : null}
+
                     </Box>
                 </div>
-                {audio ? (
+                {audio && recordingStatus === "inactive" ? (
                     <div className="audio-container">
                         <audio src={audio} controls></audio>
                         <Button variant="contained" color="secondary" onClick={submitAudio} type="button">
                             Submit
                         </Button>
                         <Button variant="contained" color="warning" onClick={startRecording} type="button">
-                            Rerecord
+                            Re-record
                         </Button>
                     </div>
                 ) : null}
             </main>
-            <ul>
-                {audioList.map((audioItem) => {
-                    return <li key={audioItem.fileTitle}>{audioItem.fileTitle}
-                        <audio src={audioItem.urlPath} controls></audio>
-                    </li>
+            <h3>All Recordings: </h3>
+            <List>
+                {audios.map((audioItem) => {
+                    // if (audioItem.urlPath != null) {
+                        return <ListItem key={audioItem.fileTitle}><ListItemText
+                            disableTypography={true}>{audioItem.fileTitle}
+                            <audio src={audioItem.urlPath} controls></audio>
+                        </ListItemText>
+                        </ListItem>
+                    // }
                 })}
-            </ul>
+            </List>
         </div>
     );
 };
